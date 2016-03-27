@@ -41,19 +41,21 @@ public class MainBluetoothActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //Check if device Has Bluetooth
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (mBluetoothAdapter == null) {
-            Toast toast = Toast.makeText(getApplicationContext(), "Device WITHOUT Bluetooth", Toast.LENGTH_SHORT);
-            toast.show();
-        }
 
-        //Enable Bluetooth if TURNED OFF
-        if (!mBluetoothAdapter.isEnabled()) {
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-        }
+        EnableBluetooth(mBluetoothAdapter);
+        getPairedDevices(mBluetoothAdapter);
+        MakeVisible();
 
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
+    }
+
+    private void getPairedDevices(BluetoothAdapter mBluetoothAdapter)
+    {
         //Query Paired Devices
         Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
         // If there are paired devices
@@ -65,7 +67,6 @@ public class MainBluetoothActivity extends AppCompatActivity {
                 items.add(device.getName() + "\n" + device.getAddress());
             }
         }
-
         // Create an Array Adapter to Add Devices to
         ArrayAdapter<String> itemsAdapter;
         itemsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_2, items);
@@ -73,18 +74,28 @@ public class MainBluetoothActivity extends AppCompatActivity {
         // Add Paired Devices to a List View
         ListView listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(itemsAdapter);
-
-       /* Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+    }
+    private void MakeVisible ()
+    {
+        Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
         discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
-        startActivity(discoverableIntent);*/
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-
+        startActivity(discoverableIntent);
     }
 
+    private void EnableBluetooth(BluetoothAdapter mBluetoothAdapter)
+    {
+        //Check if device Has Bluetooth
+        if (mBluetoothAdapter == null) {
+            Toast toast = Toast.makeText(getApplicationContext(), "Device WITHOUT Bluetooth", Toast.LENGTH_SHORT);
+            toast.show();
+        }
 
+        //Enable Bluetooth if TURNED OFF
+        if (!mBluetoothAdapter.isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -150,3 +161,5 @@ public class MainBluetoothActivity extends AppCompatActivity {
 
 
 }
+
+
