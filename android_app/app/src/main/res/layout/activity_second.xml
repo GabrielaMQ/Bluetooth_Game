@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@drawable/table"
+    >
+    //player 3
+    <ImageView android:id="@+id/p31" android:layout_width="50dp" android:layout_height="80dp" android:scaleType="centerCrop" android:src="@drawable/backc"
+        android:layout_gravity="center_horizontal|top" android:layout_marginRight="30dp" android:visibility="invisible" />
+    <ImageView android:id="@+id/p32" android:layout_width="50dp" android:layout_height="80dp" android:scaleType="centerCrop" android:src="@drawable/backc"
+        android:layout_gravity="top|center_horizontal" android:layout_marginRight="20dp" android:visibility="invisible" />
+    <ImageView android:id="@+id/p33" android:layout_width="50dp" android:layout_height="80dp" android:scaleType="centerCrop" android:src="@drawable/backc"
+        android:layout_gravity="top|center_horizontal" android:layout_marginRight="10dp" android:visibility="invisible" />
+    <ImageView android:id="@+id/p34" android:layout_width="50dp" android:layout_height="80dp" android:scaleType="centerCrop" android:src="@drawable/backc"
+        android:layout_gravity="top|center_horizontal" android:visibility="invisible" />
+    <ImageView android:id="@+id/p35" android:layout_width="50dp" android:layout_height="80dp" android:scaleType="centerCrop" android:src="@drawable/backc"
+        android:layout_gravity="top|center_horizontal" android:layout_marginRight="-10dp" android:visibility="invisible" />
+    <ImageView android:id="@+id/p36" android:layout_width="50dp" android:layout_height="80dp" android:scaleType="centerCrop" android:src="@drawable/backc"
+        android:layout_gravity="top|center_horizontal" android:layout_marginRight="-20dp" android:visibility="invisible" />
+    <ImageView android:id="@+id/p37" android:layout_width="50dp" android:layout_height="80dp" android:scaleType="centerCrop" android:src="@drawable/backc"
+        android:layout_gravity="top|center_horizontal" android:layout_marginRight="-30dp" android:visibility="invisible" />
+
+    //player 4
+    <ImageView android:layout_width="80dp" android:layout_height="50dp" android:id="@+id/p41" android:src="@drawable/backd" android:layout_gravity="right|center_vertical"
+        android:layout_marginTop="-30dp" android:visibility="invisible" />
+    <ImageView android:layout_width="80dp" android:layout_height="50dp" android:id="@+id/p42" android:src="@drawable/backd" android:layout_gravity="right|center_vertical"
+        android:layout_marginTop="-20dp" android:visibility="invisible" />
+    <ImageView android:layout_width="80dp" android:layout_height="50dp" android:id="@+id/p43" android:src="@drawable/backd" android:layout_gravity="right|center_vertical"
+        android:layout_marginTop="-10dp" android:visibility="invisible" />
+    <ImageView android:layout_width="80dp" android:layout_height="50dp" android:id="@+id/p44" android:src="@drawable/backd" android:layout_gravity="right|center_vertical"
+        android:visibility="invisible" />
+    <ImageView android:layout_width="80dp" android:layout_height="50dp" android:id="@+id/p45" android:src="@drawable/backd" android:layout_gravity="right|center_vertical"
+        android:layout_marginTop="10dp" android:visibility="invisible" />
+    <ImageView android:layout_width="80dp" android:layout_height="50dp" android:id="@+id/p46" android:src="@drawable/backd" android:layout_gravity="right|center_vertical"
+        android:layout_marginTop="20dp" android:visibility="invisible" />
+    <ImageView android:layout_width="80dp" android:layout_height="50dp" android:id="@+id/p47" android:src="@drawable/backd" android:layout_gravity="right|center_vertical"
+        android:layout_marginTop="30dp" android:visibility="invisible" />
+
+    //player 2
+    <ImageView android:layout_width="80dp" android:layout_height="50dp" android:id="@+id/p21" android:layout_gravity="left|center_vertical"
+        android:src="@drawable/backb" android:layout_marginTop="30dp" android:visibility="invisible" />
+    <ImageView android:layout_width="80dp" android:layout_height="50dp" android:id="@+id/p22" android:layout_gravity="left|center_vertical"
+        android:src="@drawable/backb" android:layout_marginTop="20dp" android:visibility="invisible" />
+    <ImageView android:layout_width="80dp" android:layout_height="50dp" android:id="@+id/p23" android:layout_gravity="left|center_vertical"
+        android:src="@drawable/backb" android:layout_marginTop="10dp" android:visibility="invisible" />
+    <ImageView android:layout_width="80dp" android:layout_height="50dp" android:id="@+id/p24" android:layout_gravity="left|center_vertical"
+        android:src="@drawable/backb" android:visibility="invisible" />
+    <ImageView android:layout_width="80dp" android:layout_height="50dp" android:id="@+id/p25" android:layout_gravity="left|center_vertical"
+        android:src="@drawable/backb" android:layout_marginTop="-10dp" android:visibility="invisible" />
+    <ImageView android:layout_width="80dp" android:layout_height="50dp" android:id="@+id/p26" android:layout_gravity="left|center_vertical"
+        android:src="@drawable/backb" android:layout_marginTop="-20dp" android:visibility="invisible" />
+    <ImageView android:layout_width="80dp" android:layout_height="50dp" android:id="@+id/p27" android:layout_gravity="left|center_vertical"
+        android:src="@drawable/backb" android:layout_marginTop="-30dp" android:visibility="invisible" />
+
+    //carta del centro
+    <ImageView android:layout_width="50dp" android:layout_height="80dp" android:id="@+id/tiradas" android:layout_gravity="center"
+        android:src="@drawable/r7"/>
+
+    //imagen de la pila
+    <ImageView android:layout_width="50dp" android:layout_height="80dp" android:id="@+id/pila" android:layout_gravity="center"
+        android:src="@drawable/backa" android:layout_marginRight="130dp"/>
+
+    //boton pasar turno
+    <ImageView android:layout_width="90dp" android:layout_height="120dp" android:id="@+id/btnpass" android:layout_gravity="center"
+        android:src="@drawable/btnpass" android:layout_marginRight="-130dp" android:layout_marginTop="-30dp"/>
+
+    //boton tomar carta
+    <ImageView android:layout_width="90dp" android:layout_height="120dp" android:id="@+id/btncard" android:layout_gravity="center"
+        android:src="@drawable/btncard"  android:layout_marginRight="-130dp" android:layout_marginTop="30dp" />
+
+    //player 1
+    <ImageView        android:layout_width="50dp"        android:layout_height="80dp"        android:id="@+id/p11"         android:layout_gravity="center_horizontal|bottom"
+        android:src="@drawable/b7"        android:layout_marginRight="0dp" />
+    <ImageView        android:layout_width="50dp"        android:layout_height="80dp"        android:id="@+id/p12"         android:layout_gravity="center_horizontal|bottom"
+        android:src="@drawable/wc"        android:layout_marginRight="0dp" />
+    <ImageView        android:layout_width="50dp"        android:layout_height="80dp"        android:id="@+id/p13"         android:layout_gravity="center_horizontal|bottom"
+        android:src="@drawable/y2"        android:layout_marginRight="0dp" />
+    <ImageView        android:layout_width="50dp"        android:layout_height="80dp"        android:id="@+id/p14"         android:layout_gravity="center_horizontal|bottom"
+        android:src="@drawable/r4"        android:layout_marginRight="0dp" />
+    <ImageView        android:layout_width="50dp"        android:layout_height="80dp"        android:id="@+id/p15"         android:layout_gravity="center_horizontal|bottom"
+        android:src="@drawable/r8"        android:layout_marginRight="0dp" />
+    <ImageView        android:layout_width="50dp"        android:layout_height="80dp"        android:id="@+id/p16"         android:layout_gravity="center_horizontal|bottom"
+        android:src="@drawable/g1"        android:layout_marginRight="0dp" />
+    <ImageView        android:layout_width="50dp"        android:layout_height="80dp"        android:id="@+id/p17"         android:layout_gravity="center_horizontal|bottom"
+        android:src="@drawable/w4"        android:layout_marginRight="0dp" />
+    <ImageView        android:layout_width="50dp"        android:layout_height="80dp"        android:id="@+id/p18"         android:layout_gravity="center_horizontal|bottom"
+        android:src="@drawable/g6"        android:layout_marginRight="0dp" android:visibility="invisible"/>
+    <ImageView        android:layout_width="50dp"        android:layout_height="80dp"        android:id="@+id/p19"         android:layout_gravity="center_horizontal|bottom"
+        android:src="@drawable/br" android:visibility="invisible"/>
+    <ImageView        android:layout_width="50dp"        android:layout_height="80dp"        android:id="@+id/p110"        android:layout_gravity="center_horizontal|bottom"
+        android:src="@drawable/ys"        android:layout_marginRight="0dp" android:visibility="invisible"/>
+    <ImageView        android:layout_width="50dp"        android:layout_height="80dp"        android:id="@+id/p111"        android:layout_gravity="center_horizontal|bottom"
+        android:src="@drawable/gd"        android:layout_marginRight="0dp" android:visibility="invisible"/>
+    <ImageView        android:layout_width="50dp"        android:layout_height="80dp"        android:id="@+id/p112"        android:layout_gravity="center_horizontal|bottom"
+        android:src="@drawable/r7"        android:layout_marginRight="0dp" android:visibility="invisible"/>
+    <ImageView        android:layout_width="50dp"        android:layout_height="80dp"        android:id="@+id/p113"        android:layout_gravity="center_horizontal|bottom"
+        android:src="@drawable/g5"        android:layout_marginRight="0dp" android:visibility="invisible"/>
+    <ImageView        android:layout_width="50dp"        android:layout_height="80dp"        android:id="@+id/p114"        android:layout_gravity="center_horizontal|bottom"
+        android:src="@drawable/bd"        android:layout_marginRight="0dp" android:visibility="invisible"/>
+    <ImageView        android:layout_width="50dp"        android:layout_height="80dp"        android:id="@+id/p115"        android:layout_gravity="center_horizontal|bottom"
+        android:src="@drawable/b0"        android:layout_marginRight="0dp" android:visibility="invisible"/>
+    <ImageView        android:layout_width="50dp"        android:layout_height="80dp"        android:id="@+id/p116"        android:layout_gravity="center_horizontal|bottom"
+        android:src="@drawable/r1"        android:layout_marginRight="0dp" android:visibility="invisible"/>
+    <ImageView        android:layout_width="50dp"        android:layout_height="80dp"        android:id="@+id/p117"        android:layout_gravity="center_horizontal|bottom"
+        android:src="@drawable/y5"        android:layout_marginRight="0dp" android:visibility="invisible"/>
+
+
+
+    //imagenes del reloj
+    <ImageView        android:layout_width="60dp"        android:layout_height="20dp"        android:id="@+id/clock1"        android:layout_gravity="center"
+        android:src="@drawable/clocka"        android:layout_marginTop="-50dp"  />
+    <ImageView        android:layout_width="60dp"        android:layout_height="20dp"        android:id="@+id/anticlock1"        android:layout_gravity="center"
+        android:src="@drawable/anticlocka"        android:layout_marginTop="-50dp"        android:visibility="invisible" />
+    <ImageView        android:layout_width="60dp"        android:layout_height="20dp"        android:id="@+id/clock3"        android:layout_gravity="center"
+        android:src="@drawable/clockc"        android:layout_marginTop="50dp"  />
+    <ImageView        android:layout_width="60dp"        android:layout_height="20dp"        android:id="@+id/anticlock2"        android:layout_gravity="center"
+        android:src="@drawable/anticlockc"        android:layout_marginTop="50dp"        android:visibility="invisible" />
+    <ImageView        android:layout_width="20dp"        android:layout_height="60dp"        android:id="@+id/clock2"        android:layout_gravity="center"
+        android:src="@drawable/clockb"        android:layout_marginRight="-50dp"  />
+    <ImageView        android:layout_width="20dp"        android:layout_height="60dp"        android:id="@+id/anticlock3"        android:layout_gravity="center"
+        android:src="@drawable/anticlockd"        android:layout_marginRight="-50dp"        android:visibility="invisible" />
+    <ImageView        android:layout_width="20dp"        android:layout_height="60dp"        android:id="@+id/clock4"        android:layout_gravity="center"
+        android:src="@drawable/clockd"        android:layout_marginRight="50dp"  />
+    <ImageView        android:layout_width="20dp"        android:layout_height="60dp"        android:id="@+id/anticlock4"        android:layout_gravity="center"
+        android:src="@drawable/clockb"        android:layout_marginRight="50dp"        android:visibility="invisible" />
+    //imagenes de la mano
+    <ImageView        android:layout_width="20dp"        android:layout_height="60dp"        android:id="@+id/hand1"        android:src="@drawable/handb"
+        android:layout_gravity="center_horizontal|bottom"        android:layout_marginBottom="70dp"/>
+    <ImageView        android:layout_width="60dp"        android:layout_height="20dp"        android:id="@+id/hand2"        android:src="@drawable/handc"
+        android:layout_gravity="left|center_vertical"        android:layout_marginLeft="70dp"        android:visibility="invisible" />
+    <ImageView        android:layout_width="20dp"        android:layout_height="60dp"        android:id="@+id/hand3"        android:src="@drawable/handd"
+        android:layout_gravity="center_horizontal|top"        android:layout_marginTop="70dp"        android:visibility="invisible" />
+    <ImageView        android:layout_width="60dp"        android:layout_height="20dp"        android:id="@+id/hand4"        android:src="@drawable/handa"
+        android:layout_gravity="right|center_vertical"        android:layout_marginRight="70dp"        android:visibility="invisible" />
+
+    //bototn temporal para cambiar de direccion
+    <Button        android:layout_width="wrap_content"        android:layout_height="wrap_content"        android:text="switch"
+        android:id="@+id/buttonT"        android:layout_gravity="center"        android:layout_marginTop="-80dp"        android:layout_marginRight="40dp"/>
+    //boton temporal para mover la mano
+    <Button        android:layout_width="wrap_content"        android:layout_height="wrap_content"        android:text="Mhand"
+        android:id="@+id/btnhand"        android:layout_gravity="center"        android:layout_marginTop="-80dp"        android:layout_marginRight="-40dp"/>
+
+    //texto para mostrar mensajes
+    <TextView        android:layout_width="wrap_content"        android:layout_height="wrap_content"        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Small Text"        android:id="@+id/messageT"        android:layout_gravity="center"
+        android:background="#f40000"        android:textColor="#000000"        android:layout_marginTop="80dp"
+        android:visibility="invisible" />
+
+
+</FrameLayout>
