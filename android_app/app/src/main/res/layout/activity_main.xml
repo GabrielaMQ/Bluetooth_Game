@@ -1,69 +1,149 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     tools:context="uno.app.uag.com.unouag.MainActivity"
     android:background="@drawable/main4">
+
 
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:src="@drawable/unologo"
-        android:layout_gravity="center"
+        android:layout_gravity="center_horizontal"
         android:id="@+id/imageView" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Jugar"
-        android:id="@+id/btnJugar"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:textSize="20dp" />
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:id="@+id/arrowleft"
+        android:src="@drawable/arrowleft"
+        android:layout_gravity="center"
+        android:layout_marginLeft="-100dp"
+        android:layout_marginTop="-10dp"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:id="@+id/arrowright"
+        android:src="@drawable/arrowright"
+        android:layout_gravity="center"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="-10dp"
+        android:visibility="invisible" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Buscando..."
-        android:id="@+id/mensaje2"
-        android:layout_below="@+id/btnJugar"
-        android:layout_centerHorizontal="true"
-        android:background="#ff0004"
-        android:visibility="invisible"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Jugadores"
+        android:id="@+id/letrerojug"
+        android:layout_gravity="center"
+        android:textSize="20dp"
         android:textColor="#000000"
-        android:textSize="18dp"
-        android:textIsSelectable="false"/>
+        android:background="#ffe100"
+        android:layout_marginTop="-30dp"
+        android:visibility="invisible" />
 
-    <ListView
-        android:id="@+id/lista"
+
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#c5757575"
-        android:visibility="invisible"
-        android:layout_below="@+id/mensaje2"
-        android:layout_centerHorizontal="true"
-        android:layout_above="@+id/btncomenzar" />
-
-
-
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="2"
+        android:id="@+id/numerojugadores"
+        android:layout_gravity="center"
+        android:textSize="25dp"
+        android:textColor="#000000"
+        android:background="#ffe600"
+        android:layout_marginTop="0dp"
+        android:visibility="invisible" />
 
     <Button
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:text="Buscar Jugadores"
+        android:id="@+id/btnBuscar"
+        android:textSize="20dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:layout_gravity="center"
+        android:visibility="invisible" />
+
+    <Button
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:text="Sincronizar"
+        android:id="@+id/btnSincronizar"
+        android:textSize="20dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:layout_gravity="center"
+        android:visibility="invisible" />
+
+    <TextView
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Buscando..."
+        android:id="@+id/mensaje2"
+        android:layout_gravity="center"
+        android:textSize="20dp"
+        android:textColor="#000000"
+        android:background="#ff0000"
+        android:layout_marginTop="50dp"
+        android:visibility="invisible" />
+
+    <Button
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:text="Comenzar"
         android:id="@+id/btncomenzar"
-        android:visibility="invisible"
-        android:layout_alignParentBottom="true"
+        android:textSize="20dp"
         android:layout_centerHorizontal="true"
-        android:textSize="20dp" />
+        android:layout_marginTop="250dp"
+        android:layout_gravity="center"
+        android:visibility="invisible" />
+
+    <ListView
+        android:layout_width="300dp"
+        android:layout_height="140dp"
+        android:id="@+id/lista"
+        android:layout_gravity="center"
+        android:background="#8e7f7f7f"
+        android:layout_marginTop="150dp"
+        android:visibility="invisible" />
+
+    <Button
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:text="Iniciar Partida"
+        android:id="@+id/btnIniciar"
+        android:textSize="20dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-70dp"
+        android:layout_gravity="center_horizontal|bottom" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ENVIAR"
+        android:id="@+id/btn_send"
+        android:layout_gravity="left|top" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Leer Servicios"
+        android:id="@+id/btn_leer"
+        android:layout_gravity="right|top" />
 
 
+</FrameLayout>
 
 
-</RelativeLayout>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="wrap_content"
+    android:gravity="center_horizontal"
+    android:orientation="horizontal">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Selecciona un color:"
+        android:id="@+id/textView"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        android:layout_gravity="top"
+        android:textColor="#000000"
+        android:background="#ffffff"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_margin="22dp"
+        android:gravity="center_horizontal"
+        android:background = "#FFFFFF"
+        android:orientation="horizontal">
+        <!-- game button -->
+        <ImageButton
+            android:id="@+id/crojo"
+            android:layout_height="70dp"
+            android:layout_width="70dp"
+            android:layout_margin="5dp"
+            android:background = "#00ffffff"
+            android:src="@drawable/rojo"/>
+        <ImageButton
+            android:id="@+id/cazul"
+            android:layout_height="70dp"
+            android:layout_width="70dp"
+            android:layout_margin="5dp"
+            android:background = "#00ffffff"
+            android:src="@drawable/azul"/>
+        <ImageButton
+            android:id="@+id/cverde"
+            android:layout_height="70dp"
+            android:layout_width="70dp"
+            android:layout_margin="5dp"
+            android:layout_gravity="bottom"
+            android:background = "#00ffffff"
+            android:src="@drawable/verde"/>
+        <ImageButton
+            android:id="@+id/camarillo"
+            android:layout_height="70dp"
+            android:layout_width="70dp"
+            android:layout_margin="5dp"
+            android:layout_gravity="bottom"
+            android:background = "#00ffffff"
+            android:src="@drawable/amarillo"/>
+
+    </LinearLayout>
+
+
+
+
+
+
+</RelativeLayout>
+
+
