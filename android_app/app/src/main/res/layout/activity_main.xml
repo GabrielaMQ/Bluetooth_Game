@@ -15,6 +15,27 @@
         android:layout_gravity="center_horizontal"
         android:id="@+id/imageView" />
 
+    <Button
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:text="Iniciar Partida"
+        android:id="@+id/btnIniciar"
+        android:textSize="20dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-70dp"
+        android:layout_gravity="center" />
+
+    <Button
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:text="Unirse a Partida"
+        android:id="@+id/btnUnirse"
+        android:textSize="20dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-20dp"
+        android:layout_gravity="center"
+        android:visibility="visible" />
+
     <ImageView
         android:layout_width="60dp"
         android:layout_height="60dp"
@@ -115,34 +136,8 @@
         android:layout_gravity="center"
         android:background="#8e7f7f7f"
         android:layout_marginTop="150dp"
-        android:visibility="invisible" />
-
-    <Button
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:text="Iniciar Partida"
-        android:id="@+id/btnIniciar"
-        android:textSize="20dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="-70dp"
-        android:layout_gravity="center_horizontal|bottom" />
-
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="ENVIAR"
-        android:id="@+id/btn_send"
-        android:layout_gravity="left|top" />
-
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Leer Servicios"
-        android:id="@+id/btn_leer"
-        android:layout_gravity="right|top" />
-
+        android:visibility="invisible"
+        android:headerDividersEnabled="true" />
 
 </FrameLayout>
 

@@ -1,18 +1,25 @@
 package uno.app.uag.com.unouag;
 
 import android.app.AlertDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
+import android.nfc.Tag;
+import android.util.Log;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +50,21 @@ import java.util.Random;
 
 public class SecondActivity extends AppCompatActivity implements View.OnClickListener {
 
+    CommunicationModuleB cModuleB = null;
+    private BluetoothAdapter mBluetoothAdapter = null;
+    String[] turnsArray;
+    String turnsarray;
+    String[] connectedPlayers;
+    String connectedplayers;
+    String address;
+    public static String EXTRA_DEVICE_ADDRESS = "device_address";
+    private static final String TAG = "BluetoothChatFragment";
+    boolean currentTurn=false;
+    int myTurn;
+    String paquete;
+    String delimiter = new String("-");
+    boolean server=false;
+    //-------------------------------------------------------------------------
     ImageView centercard;                       //imagen de la carta que esta en el centro
 
     ImageView[] IVclock = new ImageView[4];     //array de las flechas en direccion de las manesillas del reloj
@@ -81,6 +103,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     int players;                                //numero de jugadores en el juego
     int xs = 0;                                 //incrementador auxiliar
     TextView mensajeT;                          //para presentar mensajes en el centro del tablero que indicaran el color
+    int inTurn;
 
     private GoogleApiClient client;
 
@@ -93,11 +116,19 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_second);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        setUpCommunicationModule();
         Intent intent = getIntent();                            //obtener dato guardado de main activity
         Bundle extra = intent.getExtras();                      //obtenemos las variables transferidas de otra actividad
         if (extra != null) {
             players = extra.getInt("PLAYERS");                  //guardarlo en variable players
+            connectedplayers = extra.getString("PlayersList");
+            turnsarray = extra.getString("turnsArray");
+            inTurn = extra.getInt("inTurno");
+            server = extra.getBoolean("server");
+            paquete = "1-" + connectedplayers + "-" + players + "-" + turnsarray + "-" + inTurn + "-" + "none";
         }
+        defineRole(paquete);
+        startCommunicationEngine();
 
         mensajeT = (TextView) findViewById(R.id.messageT);      //relacionamos el texto del centro
 
@@ -238,6 +269,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                         view.getDrawable().clearColorFilter(); view.invalidate();
                         inicio();                               //funcion que inicia el jugo y hace los primeros movimientos
                         btnjugar.setVisibility(View.INVISIBLE); //escondemos este boton
+                        validarturno();
                         break; } } return true; }
         });
 
@@ -973,7 +1005,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         AsignarCartasInicio(players);                                   //repartimos las cartas a todos los jugadores que estan jugando
 
         AcomodarCartasJugador1();                                       //poner las cartas (imagenes) del jugador 1
-        AcomodarCartasJugador2();                                       //poner las cartas (imagenes) del jugador 2
+        //AcomodarCartasJugador2();                                       //poner las cartas (imagenes) del jugador 2
         if (players > 2) AcomodarCartasJugador3();                      //poner las cartas (imagenes) del jugador 3 si esta invitado
         if (players > 3) AcomodarCartasJugador4();                      //poner las cartas (imagenes) del jugador 4 si esta invitado
 
@@ -992,21 +1024,36 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
             }
             AcomodarCartasJugador1();                                   //Mostramos las cartas
         }
-        disponibilidaddecartas();                                       //Habilitamos/Desabilitamos las cartas del jugador 1 en base al turno
+//        disponibilidaddecartas();                                       //Habilitamos/Desabilitamos las cartas del jugador 1 en base al turno
     }
 
     boolean validarturno() {                                            //funcion de validar turno
-        boolean b = false;                                              //bandera local
-        if (turno == 1)                                                 //si es el turno del jugador 1
+        /*boolean b = false;                                              //bandera local
+        if (currentTurn)                                                 //si es el turno del jugador 1
             b = true;                                                   //es verdad
         else {                                                          //si no es su turno que obscuresca todas sus cartas
             for(int i=0;i<cntcartasp1;i++)                              //todas las cartas del jugador 1
                 player1[i].setColorFilter(Color.argb(119, 119, 119, 119)); //la oscurecemos
         }
-        return b;                                                       //regremaso la bandera
+        return b;  */                                                   //regremaso la bandera
+        if(!currentTurn){                                                          //si no es su turno que obscuresca todas sus cartas
+            for(int i=0;i<cntcartasp1;i++)                              //todas las cartas del jugador 1
+                player1[i].setColorFilter(Color.argb(119, 119, 119, 119)); //la oscurecemos
+        }else{
+            int i = 0;                 //sacamos la posicion mas a la izquierda para saber desde donde poner las cartas
+            while (i < cntcartasp1) {                                           //mientras hay cartas en el jugador 1
+                if (validarcarta(splayer1[i])){                         //si es una carta valida comparada con la que esta en el centro la habilitamos
+                    player1[i].setColorFilter(Color.argb(0, 255, 255, 255));
+                } else {                                                        //si no es valida con la carta del centro (tirada) la obscurecemos
+                    player1[i].setColorFilter(Color.argb(119, 119, 119, 119));
+                }                                              //decrementamos distacia (puntos) en posicion entre carta
+                i++;                                                            //incrementamos el numero de cartas puestas
+            }
+        }
+        return currentTurn;
     }
     void disponibilidaddecartas(){                                      //funcion de disponibilidad de cartas
-        if (turno == 1){                                                //si es el turno del jugador 1
+        if (currentTurn){                                                //si es el turno del jugador 1
             AcomodarCartasJugador1();                                   //reacomodamos las cartas VISUALMENTE
             btntomar.setVisibility(View.VISIBLE);                       //mostramos boton de tomar carta
             btnpasar.setVisibility(View.INVISIBLE);                     //escondemos boton de pasar turno
@@ -1019,7 +1066,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     boolean validarcarta(String s) {                                    //funcion de validar carta
-        boolean b = false;                                              //bandera local
+        /*boolean b = false;                                              //bandera local
         String a1 = cartaenelcentro.substring(0, 1);                    //primer caracter de la carta del centro
         String a2 = s.substring(0, 1);                                  //primer caracter de la carta del jugador
         String b1 = cartaenelcentro.substring(1, 2);                    //segundo caracter de la carta del centro
@@ -1028,11 +1075,29 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         if (((a1.compareTo(a2) == 0) || (b1.compareTo(b2) == 0)) || (a2.compareTo("w") == 0)) {
             b = true;
         }
-        return b;
+        return b;*/
+        return true;
+    }
+
+    void createCommunication() {
+        for(int i=0; i<connectedPlayers.length; i++){
+            if(!mBluetoothAdapter.getAddress().equals(connectedPlayers[i].toString())){
+                Intent intent = new Intent();
+                intent.putExtra(EXTRA_DEVICE_ADDRESS, connectedPlayers[i].toString());
+                connectDevice(intent, true);
+            }
+        }
     }
 
     void tirarcarta(String s, int n) {                                  //funcion para poner carta en el centro y quitar la que se tiro
-        cambiarimagendelcentro(s);                                      //cambiamos la imagen del centro
+        if(inTurn==players-1){
+            inTurn = 0;
+        }else{
+            inTurn++;
+        }
+        paquete = "1-" + connectedplayers + "-" + players + "-" + turnsarray + "-" + inTurn + "-" + s;
+        sendMessage(paquete);
+        //cambiarimagendelcentro(paquete);                                      //cambiamos la imagen del centro
         if(s.compareTo("w4")==0){                                       //si es la w4 WILD FOUR
             cambiarturno();                                             //cambiamos turno
             for(int i=0;i<4;i++)                                        //cuatro veces
@@ -1069,7 +1134,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         for (int i = 0; i < cntcartasp1; i++) {                         //Asignar cartas aleatorias para el jugador 1 al inicio del juego
             do {
                 Random rand = new Random();                             //comenzar random
-                n = rand.nextInt(108);                                  //entre 0 y 107
+                n = rand.nextInt(76);                                  //entre 0 y 107
             } while (cartas[n] == "0");                                 //mientras sea un 0 buscar otro valor, por que 0 significa que ya no existe
             String cname = cartas[n];                                   //guardamos el nombre en variable temporal
             cartas[n] = "0";                                            //la casilla le ponemos 0 para ya no usarla
@@ -1082,7 +1147,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
             for (int i = 0; i < 7; i++) {                               //Asignar 7 cartas a cada jugadore
                 do {
                     Random rand = new Random();                         //comenzar random
-                    n = rand.nextInt(108);                              //entre 0 y 107
+                    n = rand.nextInt(76);                              //entre 0 y 107
                 } while (cartas[n] == "0");                             //mientras sea un 0 buscar otro valor
                 String cname = cartas[n];                               //guardamos el nombre
                 cartas[n] = "0";                                        //la casilla le ponemos 0
@@ -1098,7 +1163,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         //ahora mostramos una carta en el centro para comenzar el juego
         do {
             Random rand = new Random();                                     //comenzar random
-            n = rand.nextInt(108);                                          //entre 0 y 107
+            n = rand.nextInt(76);                                          //entre 0 y 107
         }
         while ((cartas[n] == "0") || (cartas[n] == "w4") || (cartas[n] == "wc"));   //mientras sea un 0, WC, W4 entonces buscar otro valor
         String cname = cartas[n];                                           //guardamos nombre
@@ -1270,13 +1335,16 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     void cambiarimagendelcentro(String vs) {                                //escondemos imagen del centro
+        String[] Operation = vs.split(delimiter);
         mensajeT.setText("");                                               //eliminamos cualquier texto
         mensajeT.setVisibility(View.INVISIBLE);                             //escondemos TEXTO del centro
         Resources res = getResources();                                     //obtener la clase actual de recursos
-        int resID = res.getIdentifier(vs, "drawable", getPackageName());    //buscamos la carta en el drawable
+        int resID = res.getIdentifier(Operation[5].toString(), "drawable", getPackageName());    //buscamos la carta en el drawable
         centercard.setImageResource(resID);                                 //asignamos la imagen en la carta del centro
         //ESTE ES EL TEXTO qEU CONTINUAMENTE CAMBIA PARA SABER CONTRA QUE VALIDAMOS CADA MOVIMIENTO
         cartaenelcentro = vs;
+        // also validate player cards
+        validarcarta(Operation[5].toString());
     }
 
     int obtenerdistanciaentrecartas(int c) {                                //distancia entre cartas del jugador 1
@@ -1307,7 +1375,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     void cambiarturno() {
-        if (swapArrow == true) {                                            //clockwise direccion
+        /*if (swapArrow == true) {                                            //clockwise direccion
             do {
                 dirHand++;                                                  //imcremntamos indice
                 if (dirHand > 3)                                            //si recorre la mano mas de 4 posiciones
@@ -1325,7 +1393,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         for (int i = 0; i < 4; i++)
             hands[i].setVisibility(View.INVISIBLE);                         //esconder todas las mano
         hands[dirHand].setVisibility(View.VISIBLE);                         //Mostar solo la mano del jugador que sigue en turno
-        turno = turnos[dirHand];                                            //guardamos el TURNO DEL JUGADOR QUE SIGUE
+        //turno = turnos[dirHand];   */                                         //guardamos el TURNO DEL JUGADOR QUE SIGUE
     }
 
     //****NO SE ESTA UTILIZANDO EL CLICKLISTENER
@@ -1338,7 +1406,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         int n = 0;
         do {
             Random rand = new Random();                                     //comenzar random
-            n = rand.nextInt(108);                                          //entre 0 y 107
+            n = rand.nextInt(76);                                          //entre 0 y 107
         } while (cartas[n] == "0");                                         //mientras sea un 0 buscar otro valor, por que 0 significa que ya no existe
         String cname = cartas[n];                                           //nombre de la carta seleccionada
         cartas[n] = "0";                                                    //la casilla le ponemos 0 para ya no usarla
@@ -1358,7 +1426,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                 player2[i].setImageDrawable(null);                          //eliminamos las cartas actuales visualmente
                 player2[i].setVisibility(View.INVISIBLE);
             }
-            AcomodarCartasJugador2();                                       //ACOMODAMOS LAS CARTAS DEL JUGADOR 2
+            //AcomodarCartasJugador2();                                       //ACOMODAMOS LAS CARTAS DEL JUGADOR 2
         } else if(turno == 3) {                                             //LO MISMO QUE EL JGADOR 2 pero apra el 3
             ++cntcartasp3;
             splayer3[cntcartasp3-1] = cname;
@@ -1378,6 +1446,13 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (cModuleB != null) {
+            cModuleB.stop();
+        }
+    }
 
     @Override
     public void onStart() {
@@ -1418,6 +1493,178 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         AppIndex.AppIndexApi.end(client, viewAction);
         client.disconnect();
     }
+
+    void setUpCommunicationModule(){
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        // Initialize the BluetoothChatService to perform bluetooth connections
+        cModuleB = new CommunicationModuleB(this, mHandler);
+
+        // If the adapter is null, then Bluetooth is not supported
+        if (mBluetoothAdapter == null) {
+            FragmentActivity activity = SecondActivity.this;
+            Toast.makeText(activity, "Bluetooth is not available", Toast.LENGTH_LONG).show();
+            activity.finish();
+        }
+    }
+
+    void defineRole(String paquete){
+        currentTurn=false;
+        Log.d(TAG, "defineRole(), Received: " + paquete);
+        //cModuleB.stop();
+        String[] Operation = paquete.split(delimiter);
+        connectedPlayers = Operation[1].toString().split(",");
+        connectedplayers = Operation[1].toString();
+        Log.d(TAG,Operation[1].toString());
+        players = Integer.parseInt(Operation[2].toString());                  //guardarlo en variable players
+        Log.d(TAG,Operation[2].toString());
+        turnsArray =  Operation[3].toString().split(",");
+        turnsarray = Operation[3].toString();
+        Log.d(TAG,"" + Operation[4].toString());
+        inTurn = Integer.parseInt(Operation[4].toString());
+        turno = inTurn + 1;
+        String card = Operation[5].toString();
+
+        Log.d(TAG,"length of MACs Array: " + connectedPlayers.length);
+        for(int i=0; i<connectedPlayers.length; i++){
+            if(mBluetoothAdapter.getAddress().equals(connectedPlayers[i].toString()) && (turnsArray[i].toString().equals("" +inTurn))){
+                //Current server
+                currentTurn=true;
+                myTurn=Integer.parseInt(turnsArray[i].toString());
+                Log.d(TAG, "Its my turn: " + connectedPlayers[i].toString() + ", turn: " + turnsArray[i].toString());
+            }else{
+                Log.d(TAG, "Not my turn");
+            }
+        }
+    }
+
+    void giveItSomeTime(){
+        long begin = System.currentTimeMillis();
+        long now=0;
+        while(now-begin<8000){
+            now = System.currentTimeMillis();
+        }
+    }
+
+    void startCommunicationEngine(){
+        if(!server){
+            Log.d(TAG,"Current Client");
+            cModuleB.start();
+        }else{
+            Log.d(TAG, "Current Server");
+            //giveItSomeTime();
+            createCommunication();
+            while(players != cModuleB.getPlayersOnline() + 1){
+                giveItSomeTime();
+                createCommunication();
+            }
+        }
+    }
+
+    private void connectDevice(Intent data, boolean secure) {
+        // Get the device MAC address
+        String address = data.getExtras()
+                .getString(EXTRA_DEVICE_ADDRESS);
+        // Get the BluetoothDevice object
+        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
+        // Attempt to connect to the device
+        cModuleB.connect(device, secure);
+    }
+
+    private void sendMessage(String message) {
+        Log.d(TAG,"Sending paquete...");
+
+        // Check that there's actually something to send
+        if (message.length() > 0) {
+            // Get the message bytes and tell the BluetoothChatService to write
+            byte[] send = message.getBytes();
+            cModuleB.write(send);
+
+            // Reset out string buffer to zero and clear the edit text field
+            //mOutStringBuffer.setLength(0);
+        }
+        Log.d(TAG, "paquete sent");
+    }
+
+    void notifyOthers(String message){
+        sendMessage(message);
+    }
+
+    void connectionLost(){
+        currentTurn=false;
+        validarturno();
+        if (mBluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
+            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+            startActivity(discoverableIntent);
+        }
+        int tmp = myTurn;
+        if (myTurn==0){myTurn=players+1;}
+        if(validarturno() || inTurn == myTurn - 1){
+            inTurn=myTurn;
+            server=true;
+            currentTurn=true;
+        }else{
+            server=false;
+        }
+        myTurn = tmp;
+        startCommunicationEngine();
+        validarturno();
+    }
+
+    private final Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            FragmentActivity activity = SecondActivity.this;
+            switch (msg.what) {
+                case Constants.MESSAGE_STATE_CHANGE:
+                    switch (msg.arg1) {
+                        case CommunicationModuleB.STATE_CONNECTED:
+                            //sendAddress(mBluetoothAdapter.getAddress());
+                            //setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
+                            //mConversationArrayAdapter.clear();
+                            break;
+                        case CommunicationModuleB.STATE_CONNECTING:
+                            //setStatus(R.string.title_connecting);
+                            break;
+                        case CommunicationModuleB.STATE_LISTEN:
+                        case CommunicationModuleB.STATE_NONE:
+                            //setStatus(R.string.title_not_connected);
+                            break;
+                    }
+                    break;
+                case Constants.MESSAGE_WRITE:
+                    byte[] writeBuf = (byte[]) msg.obj;
+                    // construct a string from the buffer
+                    String writeMessage = new String(writeBuf);
+                    cambiarimagendelcentro(writeMessage);
+                    defineRole(writeMessage);
+                    break;
+                case Constants.MESSAGE_READ:
+                    byte[] readBuf = (byte[]) msg.obj;
+                    // construct a string from the valid bytes in the buffer
+                    String message = new String(readBuf, 0, msg.arg1);
+                    //processPackage(message);
+                    //showMessage(message);
+                    if(server){
+                        notifyOthers(message);
+                    }
+                    cambiarimagendelcentro(message);
+                    defineRole(message);
+                    disponibilidaddecartas();
+                    //mConversationArrayAdapter.add(":  " + readMessage);
+                    break;
+                case Constants.MESSAGE_TOAST:
+                    if (null != activity) {
+                        Toast.makeText(activity, msg.getData().getString(Constants.TOAST),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case Constants.CONNECTION_LOST:
+                    connectionLost();
+                    break;
+            }
+        }
+    };
 }
 
 
