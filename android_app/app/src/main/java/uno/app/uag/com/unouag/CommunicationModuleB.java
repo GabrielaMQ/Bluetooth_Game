@@ -103,9 +103,10 @@ public class CommunicationModuleB {
      *
      * @param playersOnline An integer defining the number of online users
      */
-    private synchronized void setPlayersOnline(int playersOnline) {
+    private synchronized void setPlayersOnline(int playersOnline, String address) {
+        MACs[mplayersOnline] = address;
         int newValue = mplayersOnline + playersOnline;
-        Log.d(TAG, "setPlayersOnline() " + mplayersOnline + " -> " + playersOnline);
+        Log.d(TAG, "setPlayersOnline() " + mplayersOnline + " -> " + newValue);
         mplayersOnline = newValue;
 
         // Give the new state to the Handler so the UI Activity can update
@@ -117,6 +118,10 @@ public class CommunicationModuleB {
      */
     public synchronized int getState() {
         return mState;
+    }
+
+    public synchronized String[] getMACs() {
+        return MACs;
     }
 
     /**
@@ -229,7 +234,7 @@ public class CommunicationModuleB {
 
         setState(STATE_CONNECTED);
         //setState(STATE_LISTEN);
-        setPlayersOnline(1);
+        setPlayersOnline(1,device.getAddress());
     }
 
     /**
@@ -238,12 +243,12 @@ public class CommunicationModuleB {
     public synchronized void stop() {
         Log.d(TAG, "stop");
 
-        for(int i=0; i< mplayersOnline; i++){
+        /*for(int i=0; i< mplayersOnline; i++){
             if (mConnectThread[i] != null) {
                 mConnectThread[i].cancel();
                 mConnectThread[i] = null;
             }
-        }
+        }*/
 
         for(int i=0; i< mplayersOnline; i++){
             if (mConnectedThread[i] != null) {
@@ -256,6 +261,7 @@ public class CommunicationModuleB {
             mSecureAcceptThread.cancel();
             mSecureAcceptThread = null;
         }
+        mplayersOnline=0;
         setState(STATE_NONE);
         Log.d(TAG, "all services are stopped");
     }
@@ -299,6 +305,7 @@ public class CommunicationModuleB {
      * Indicate that the connection was lost and notify the UI Activity.
      */
     private void connectionLost() {
+        stop();
         // Send a failure message back to the Activity
         Message msg = mHandler.obtainMessage(Constants.CONNECTION_LOST);
         Bundle bundle = new Bundle();

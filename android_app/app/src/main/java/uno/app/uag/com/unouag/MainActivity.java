@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     String inTurn = "0";
     String connectedPlayersArray = "";
     String turnsArray = "";
+    String playersState = "";
     String deviceName;
     //-------------------------------------------------------------------------
     ListView listview;                                      //lista de los jugadores
@@ -376,11 +377,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
             // Otherwise, setup the chat session
         }
-        if (mBluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
+        //if (mBluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
             Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
             discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
             startActivity(discoverableIntent);
-        }
+        //}
         listview = (ListView) findViewById(R.id.lista);
         mNewDevicesArrayAdapter = new ArrayAdapter<String>(this, R.layout.device_name);
         listview.setAdapter(mNewDevicesArrayAdapter);
@@ -470,6 +471,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             intent.putExtra("turnsArray", Operation[3]);
             intent.putExtra("inTurn", inTurn);
             intent.putExtra("PLAYERS", indiceA);
+            intent.putExtra("playersState", Operation[5]);
             startActivity(intent);
         }
     }
@@ -478,12 +480,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         for(int i=0; i<indiceA-1; i++){
             connectedPlayersArray = connectedPlayersArray + connectedPlayers[i].toString() + ",";
             turnsArray = turnsArray + i + ",";
+            playersState = playersState + "online,";
         }
         connectedPlayersArray = connectedPlayersArray + connectedPlayers[indiceA-1].toString();
         turnsArray = turnsArray + (indiceA-1);
+        playersState = playersState + "online";
 
-        String paquete = "1-" + connectedPlayersArray + "-" + indiceA + "-" + turnsArray + "-" + inTurn;
+        String paquete = "1-" + connectedPlayersArray + "-" + indiceA + "-" + turnsArray + "-" + inTurn + "-" + playersState;
         sendMessage(paquete);
+        mBluetoothAdapter.setName(deviceName);
     }
 
     /**
@@ -521,6 +526,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         intent.putExtra("turnsArray", turnsArray);
         intent.putExtra("inTurn", inTurn);
         intent.putExtra("PLAYERS", indiceA);
+        intent.putExtra("playersState", playersState);
         intent.putExtra("server",server);
         startActivity(intent);
     }

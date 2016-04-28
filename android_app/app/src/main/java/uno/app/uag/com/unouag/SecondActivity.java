@@ -56,7 +56,11 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     String turnsarray;
     String[] connectedPlayers;
     String connectedplayers;
+    String[] playersState;
+    String playersstate;
     String address;
+    String[] allHands;
+    String allhands;
     public static String EXTRA_DEVICE_ADDRESS = "device_address";
     private static final String TAG = "BluetoothChatFragment";
     boolean currentTurn=false;
@@ -105,6 +109,13 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     TextView mensajeT;                          //para presentar mensajes en el centro del tablero que indicaran el color
     int inTurn;
 
+    ImageView btnmenu;                         //boton para regresar al menu
+
+    ImageView ganador1;                         //si gano el jugador1
+    ImageView ganador2;                         //si gano el jugador2
+    ImageView ganador3;                         //si gano el jugador3
+    ImageView ganador4;                         //si gano el jugador4
+
     private GoogleApiClient client;
 
     @Override
@@ -123,9 +134,11 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
             players = extra.getInt("PLAYERS");                  //guardarlo en variable players
             connectedplayers = extra.getString("PlayersList");
             turnsarray = extra.getString("turnsArray");
+            playersstate = extra.getString("playersState");
             inTurn = extra.getInt("inTurno");
             server = extra.getBoolean("server");
-            paquete = "1-" + connectedplayers + "-" + players + "-" + turnsarray + "-" + inTurn + "-" + "none";
+            allhands = cntcartasp1 + "," + cntcartasp2 + "," + cntcartasp3 + "," + cntcartasp4;
+            paquete = "1-" + connectedplayers + "-" + players + "-" + turnsarray + "-" + inTurn + "-" + "none" + "-" + allhands;//playersstate;
         }
         defineRole(paquete);
         startCommunicationEngine();
@@ -224,6 +237,13 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         btntomar = (ImageView) findViewById(R.id.btncarta);     //relacionamos boton tomar carta
         btnjugar = (ImageView) findViewById(R.id.btnjugar);     //relacionamos boton jugar partid
 
+        btnmenu = (ImageView) findViewById(R.id.btnmenu);     //relacionamos boton ir a menu
+
+        ganador1 = (ImageView) findViewById(R.id.ganador1);     //relacionamos felicitacion jugador 1
+        ganador2 = (ImageView) findViewById(R.id.ganador2);     //relacionamos felicitacion jugador 2
+        ganador3 = (ImageView) findViewById(R.id.ganador3);     //relacionamos felicitacion jugador 3
+        ganador4 = (ImageView) findViewById(R.id.ganador4);     //relacionamos felicitacion jugador 4
+
         btnpasar.setOnTouchListener(new View.OnTouchListener() {//si se toco la primera imagen
             public boolean onTouch(View v, MotionEvent event) {             //boton pasar turno
                 switch (event.getAction()) {
@@ -234,9 +254,16 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                     case MotionEvent.ACTION_CANCEL: {
                         ImageView view = (ImageView) v;
                         view.getDrawable().clearColorFilter(); view.invalidate();
-                        cambiarturno();                         //cambiamos de turno
+                        if(inTurn==players-1){
+                            inTurn = 0;
+                        }else{
+                            inTurn++;
+                        }
+                        paquete = "1-" + connectedplayers + "-" + players + "-" + turnsarray + "-" + inTurn + "-" + cartaenelcentro.toString() + "-" + allhands;//playersstate;
+                        sendMessage(paquete);
+                        defineRole(paquete);
+                        disponibilidaddecartas();
                         btnpasar.setVisibility(View.INVISIBLE); //escondemos este boton
-                        disponibilidaddecartas();               //deshabilitamos las cartas
                         break; } } return true; }
         });
 
@@ -272,6 +299,22 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                         validarturno();
                         break; } } return true; }
         });
+
+        btnmenu.setOnTouchListener(new View.OnTouchListener() {//si se toco este boton
+            public boolean onTouch(View v, MotionEvent event) {             //booton volver al menu
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        ImageView view = (ImageView) v; view.getDrawable().setColorFilter(0x77000000, PorterDuff.Mode.SRC_ATOP);
+                        view.invalidate(); break; }
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL: {
+                        ImageView view = (ImageView) v;
+                        view.getDrawable().clearColorFilter(); view.invalidate();
+                        Intent intent=new Intent(SecondActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        break; } } return true; }
+        });
+
 
         ///********************BOTONES/IMAGENES DE CADA CARTA DEL JUGADOR 1
         player1[0].setOnTouchListener(new View.OnTouchListener() {//si se toco la primera imagen
@@ -1024,7 +1067,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
             }
             AcomodarCartasJugador1();                                   //Mostramos las cartas
         }
-//        disponibilidaddecartas();                                       //Habilitamos/Desabilitamos las cartas del jugador 1 en base al turno
+        disponibilidaddecartas();                                       //Habilitamos/Desabilitamos las cartas del jugador 1 en base al turno
     }
 
     boolean validarturno() {                                            //funcion de validar turno
@@ -1066,7 +1109,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     boolean validarcarta(String s) {                                    //funcion de validar carta
-        /*boolean b = false;                                              //bandera local
+        boolean b = false;                                              //bandera local
         String a1 = cartaenelcentro.substring(0, 1);                    //primer caracter de la carta del centro
         String a2 = s.substring(0, 1);                                  //primer caracter de la carta del jugador
         String b1 = cartaenelcentro.substring(1, 2);                    //segundo caracter de la carta del centro
@@ -1075,16 +1118,23 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         if (((a1.compareTo(a2) == 0) || (b1.compareTo(b2) == 0)) || (a2.compareTo("w") == 0)) {
             b = true;
         }
-        return b;*/
-        return true;
+        return b;
     }
 
     void createCommunication() {
         for(int i=0; i<connectedPlayers.length; i++){
             if(!mBluetoothAdapter.getAddress().equals(connectedPlayers[i].toString())){
-                Intent intent = new Intent();
-                intent.putExtra(EXTRA_DEVICE_ADDRESS, connectedPlayers[i].toString());
-                connectDevice(intent, true);
+                boolean found = false;
+                for(int j=0; j<cModuleB.getPlayersOnline(); j++){
+                    if(cModuleB.getMACs()[j].equals(connectedPlayers[i].toString())){
+                        found=true;
+                    }
+                }
+                if(!found){
+                    Intent intent = new Intent();
+                    intent.putExtra(EXTRA_DEVICE_ADDRESS, connectedPlayers[i].toString());
+                    connectDevice(intent, true);
+                }
             }
         }
     }
@@ -1095,7 +1145,9 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         }else{
             inTurn++;
         }
-        paquete = "1-" + connectedplayers + "-" + players + "-" + turnsarray + "-" + inTurn + "-" + s;
+        cntcartasp1--;                                                  //restamos 1 al contador de cartas del jugador1
+        updateAllHands();
+        paquete = "1-" + connectedplayers + "-" + players + "-" + turnsarray + "-" + inTurn + "-" + s + "-" + allhands; //+ "-" + playersstate;
         sendMessage(paquete);
         //cambiarimagendelcentro(paquete);                                      //cambiamos la imagen del centro
         if(s.compareTo("w4")==0){                                       //si es la w4 WILD FOUR
@@ -1122,7 +1174,6 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
             cambiarturno();                                             //cambiamos de turno de jugador
         }
         splayer1[n] = "0";                                              //limpiamos el campo string del jugador 1
-        cntcartasp1--;                                                  //restamos 1 al contador de cartas del jugador1
         reordenarcartasjugador1(n);                                     //reorganizamos el array de string de los nombres de las cartas del jugador1
         AcomodarCartasJugador1();                                       //mostramos las cartas que restan
         disponibilidaddecartas();                                       //habilitamos/deshabilitamos las cartas segun la carta tirada
@@ -1342,7 +1393,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         int resID = res.getIdentifier(Operation[5].toString(), "drawable", getPackageName());    //buscamos la carta en el drawable
         centercard.setImageResource(resID);                                 //asignamos la imagen en la carta del centro
         //ESTE ES EL TEXTO qEU CONTINUAMENTE CAMBIA PARA SABER CONTRA QUE VALIDAMOS CADA MOVIMIENTO
-        cartaenelcentro = vs;
+        cartaenelcentro = Operation[5].toString();
         // also validate player cards
         validarcarta(Operation[5].toString());
     }
@@ -1523,29 +1574,32 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         inTurn = Integer.parseInt(Operation[4].toString());
         turno = inTurn + 1;
         String card = Operation[5].toString();
-
-        Log.d(TAG,"length of MACs Array: " + connectedPlayers.length);
+        allHands = Operation[6].toString().split(",");
+        Log.d(TAG,"cartas de cada jugador: " + Operation[6].toString());
+        //playersState = Operation[7].toString().split(",");
+        //playersstate = Operation[7].toString();
         for(int i=0; i<connectedPlayers.length; i++){
             if(mBluetoothAdapter.getAddress().equals(connectedPlayers[i].toString()) && (turnsArray[i].toString().equals("" +inTurn))){
                 //Current server
                 currentTurn=true;
-                myTurn=Integer.parseInt(turnsArray[i].toString());
+                myTurn=inTurn;
+                cntcartasp1 = Integer.parseInt(allHands[i]);
                 Log.d(TAG, "Its my turn: " + connectedPlayers[i].toString() + ", turn: " + turnsArray[i].toString());
-            }else{
-                Log.d(TAG, "Not my turn");
             }
+            emptyHand(Integer.parseInt(allHands[i]),Integer.parseInt(turnsArray[i]));
         }
     }
 
     void giveItSomeTime(){
         long begin = System.currentTimeMillis();
         long now=0;
-        while(now-begin<8000){
+        while(now-begin<6000){
             now = System.currentTimeMillis();
         }
     }
 
     void startCommunicationEngine(){
+        int tries=0;
         if(!server){
             Log.d(TAG,"Current Client");
             cModuleB.start();
@@ -1553,10 +1607,33 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
             Log.d(TAG, "Current Server");
             //giveItSomeTime();
             createCommunication();
-            while(players != cModuleB.getPlayersOnline() + 1){
+            while(players != cModuleB.getPlayersOnline() + 1 &&  tries < 5){
                 giveItSomeTime();
                 createCommunication();
+                tries++;
             }
+            /*for(int i=0; i<connectedPlayers.length; i++){
+                if(!mBluetoothAdapter.getAddress().equals(connectedPlayers[i].toString())){
+                    boolean found = false;
+                    for(int j=0; j<cModuleB.getPlayersOnline(); j++){
+                        if(cModuleB.getMACs()[j].equals(connectedPlayers[i].toString())){
+                            found = true;
+                        }
+                    }
+                    if(!found){
+                        //playersState[i] = "online";
+                    }else{
+                        //playersState[i] = "offline";
+                    }
+                }else{
+                    //playersState[i] = "online";
+                }
+            }
+            /*playersstate = "";
+            for(int j=0; j<connectedPlayers.length - 1; j++){
+                playersstate = playersstate + playersState[j] + ",";
+            }
+            playersstate = playersstate + playersState[connectedPlayers.length];*/
         }
     }
 
@@ -1590,25 +1667,84 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     void connectionLost(){
-        currentTurn=false;
-        validarturno();
-        if (mBluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
-            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
-            startActivity(discoverableIntent);
-        }
-        int tmp = myTurn;
-        if (myTurn==0){myTurn=players+1;}
-        if(validarturno() || inTurn == myTurn - 1){
-            inTurn=myTurn;
-            server=true;
-            currentTurn=true;
+        // si se pierde la conexion con el servidor
+        if(!server){
+            Log.d(TAG,"inTurn: " + inTurn + " myTurn: " + myTurn);
+            int tmp = myTurn;
+            if (myTurn==0){myTurn=players+1;}
+
+            if(inTurn == myTurn - 1){
+                Log.d(TAG,"become server");
+                currentTurn=true;
+                inTurn=myTurn;
+                server=true;
+            }else{
+                Log.d(TAG,"start listening mode");
+                currentTurn=false;
+                server=false;
+            }
+            myTurn = tmp;
+            //setUpCommunicationModule();
+            startCommunicationEngine();
+            disponibilidaddecartas();
         }else{
+            //setUpCommunicationModule();
+            cModuleB.start();
+            currentTurn=false;
             server=false;
         }
-        myTurn = tmp;
-        startCommunicationEngine();
-        validarturno();
+    }
+
+    void updateAllHands(){
+        for(int i=0; i<connectedPlayers.length; i++){
+            if(mBluetoothAdapter.getAddress().equals(connectedPlayers[i].toString())){
+                allHands[i] = "" + cntcartasp1;
+                Log.d(TAG, "cards in turn: " + cntcartasp1);
+            }
+        }
+        allhands = "";
+        for(int i=0; i<connectedPlayers.length - 1; i++){
+            allhands = allhands + allHands[i] + ",";
+        }
+        allhands = allhands + allHands[connectedPlayers.length - 1];
+        Log.d(TAG, "one card was sent: " + allhands);
+    }
+
+    boolean emptyHand(int cartas, int turno){
+        boolean winner = false;
+        //SI ALGUNO DE LOS JUGADORES SE LES TERMINO LAS CARTAS
+        if(cartas == 0){
+            winner = true;
+            if(turno == 0)
+                ganador1.setVisibility(View.VISIBLE);
+            else if (turno == 1)
+                ganador2.setVisibility(View.VISIBLE);
+            else if (turno == 2)
+                ganador3.setVisibility(View.VISIBLE);
+            else if (turno == 3)
+                ganador4.setVisibility(View.VISIBLE);
+
+            //DEBIDO A QUE ALGUIEN GANO ESCONDEMOS TODAS LAS IMAGENES
+            /*for(int i=0;i<4;i++)   IVclock[i].setVisibility(View.INVISIBLE);        //escondemos las flecha
+            for(int i=0;i<4;i++)   IVanticlock[i].setVisibility(View.INVISIBLE);    //escondemos las flechas al reve
+            for(int i=0;i<4;i++)   hands[i].setVisibility(View.INVISIBLE);          //escondemos las manos
+            //ESCONDEMOS TODAS LAS CARTAS DE CADA JUGADOR
+            for(int i=0;i<cntcartasp1;i++)
+                player1[i].setVisibility(View.INVISIBLE);
+            for(int i=0;i<cntcartasp2;i++)
+                player2[i].setVisibility(View.INVISIBLE);
+            for(int i=0;i<cntcartasp3;i++)
+                player3[i].setVisibility(View.INVISIBLE);
+            for(int i=0;i<cntcartasp4;i++)
+                player4[i].setVisibility(View.INVISIBLE);*/
+            //MOSTRAMOS EL MENU
+            btnmenu.setVisibility(View.VISIBLE);
+        } /*else{
+            reordenarcartasjugador1(n);                                     //reorganizamos el array de string de los nombres de las cartas del jugador1
+            AcomodarCartasJugador1();                                       //mostramos las cartas que restan
+            disponibilidaddecartas();                                       //habilitamos/deshabilitamos las cartas segun la carta tirada
+        }*/
+        return winner;
     }
 
     private final Handler mHandler = new Handler() {
@@ -1628,7 +1764,6 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                             break;
                         case CommunicationModuleB.STATE_LISTEN:
                         case CommunicationModuleB.STATE_NONE:
-                            //setStatus(R.string.title_not_connected);
                             break;
                     }
                     break;
