@@ -1,4 +1,4 @@
-# Bluetooth_Game s
+# Bluetooth_Game 
 
 El proyecto contiene:
 1. android_app
@@ -6,5 +6,6 @@ El proyecto contiene:
 2.doc
 	Planeacion del Proyecto
 	Documentacion Tecnica
+	Presentacion del Proyecto
 3.pruebas
 	Resultados y Documentacion de Pruebas
